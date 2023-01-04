@@ -2,10 +2,12 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "../styles/Home.module.css";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+export default function Home({ data }: any) {
+  console.log(data);
   return (
     <>
       <Head>
@@ -17,15 +19,20 @@ export default function Home() {
 
       <header>
         <nav>
-          <img />
-          <a href="/">Home</a>
-          <a href="/events">Events</a>
-          <a href="/about-us">About Us</a>
+          <Link href="/">Home</Link>
+          <Link href="/events">Events</Link>
+          <Link href="/about-us">About Us</Link>
         </nav>
       </header>
       <main className={styles.main}>
-        <a href="/events/london">
-          <img />
+        {data.map((ev: any) => (
+          <Link key={ev.id} href={`/events/${ev.id}`}>
+            <Image width={200} height={200} alt={ev.title} src={ev.image} />
+            <h2>{ev.title}</h2> <p>{ev.description}</p>
+          </Link>
+        ))}
+{/*         
+        <Link href="/events/london">
           <h2>Events in London</h2>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. A, fugit
@@ -33,10 +40,9 @@ export default function Home() {
             est delectus doloribus, perferendis aliquam. Repudiandae aut ad
             facilis? Voluptatibus?
           </p>
-        </a>
+        </Link>
 
-        <a href="/events/sanfran">
-          <img />
+        <Link href="/events/sanfran">
           <h2>Events in San Francisco</h2>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. A, fugit
@@ -44,10 +50,9 @@ export default function Home() {
             est delectus doloribus, perferendis aliquam. Repudiandae aut ad
             facilis? Voluptatibus?
           </p>
-        </a>
+        </Link>
 
-        <a href="/events/london">
-          <img />
+        <Link href="/events/london">
           <h2>Events in Barcelona</h2>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. A, fugit
@@ -55,8 +60,19 @@ export default function Home() {
             est delectus doloribus, perferendis aliquam. Repudiandae aut ad
             facilis? Voluptatibus?
           </p>
-        </a>
+        </Link> */}
       </main>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const { events_categories } = await import("../data/data.json");
+  console.log(events_categories);
+
+  return {
+    props: {
+      data: events_categories,
+    },
+  };
 }
